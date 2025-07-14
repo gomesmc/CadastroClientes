@@ -15,9 +15,13 @@ O projeto foi criado com o objetivo de praticar conceitos fundamentais da lingua
 
 - ✅ Cadastrar clientes pelo terminal
 - ✅ Listar clientes cadastrados
+- ✅ Atualizar dados de clientes pelo ID
+- ✅ Deletar clientes pelo ID
 - ✅ Menu interativo com opções numeradas
-- ✅ Validação de entrada do usuário (`s/n` para continuar cadastrando)
-- ✅ Limpa os dados do banco toda vez que o programa inicia *(ideal para testes)*
+- ✅ Validação de entrada do usuário 
+- ✅ Escolha de salvar ou descartar dados ao sair do programa
+- ✅ Criação automática da tabela no banco de dados
+- ✅ Interface interativa via terminal/console
 
 ---
 
@@ -35,5 +39,5 @@ O projeto foi criado com o objetivo de praticar conceitos fundamentais da lingua
 ### 1. Clone o repositório
 
 ```bash
-git clone https://github.com/seu-usuario/seu-repositorio.git
-cd seu-repositorio
+git clone https://github.com/gomesmc/CadastroClientes
+cd CadsatroClientes

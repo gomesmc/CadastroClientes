@@ -18,6 +18,8 @@ class Program
             Console.WriteLine("1 - Cadastrar cliente");
             Console.WriteLine("2 - Listar clientes");
             Console.WriteLine("3 - Sair");
+            Console.WriteLine("4 - Atualizar cliente");
+            Console.WriteLine("5 - Deletar cliente");
             Console.Write("Escolha uma opção: ");
 
             string entrada = Console.ReadLine();
@@ -56,11 +58,42 @@ class Program
                     break;
 
                 case 2:
-                    ListarClientes();
+                    ListarClientes(true);  
                     break;
 
                 case 3:
+                    string salvar;
+                    do
+                    {
+                        Console.Write("\nDeseja salvar a lista de clientes cadastrados? (s/n): ");
+                        salvar = Console.ReadLine().ToLower();
+
+                        if (salvar != "s" && salvar != "n")
+                        {
+                            Console.WriteLine("Entrada inválida. Digite apenas 's' para sim ou 'n' para não.");
+                        }
+
+                    } while (salvar != "s" && salvar != "n");
+
+                    if (salvar == "n")
+                    {
+                        LimparTabela();
+                        Console.WriteLine("Lista de clientes excluída");
+                    }
+                    else
+                    {
+                        Console.WriteLine("Lista de clientes salva");
+                    }
+
                     Console.WriteLine("Fim do programa");
+                    break;
+
+                case 4:
+                    AtualizarCliente();
+                    break;
+
+                case 5:
+                    DeletarCliente();
                     break;
 
                 default:
@@ -78,7 +111,11 @@ class Program
         conexao.Execute(@"CREATE TABLE IF NOT EXISTS Pessoa (
                             Id INTEGER PRIMARY KEY AUTOINCREMENT,
                             Nome TEXT NOT NULL)");
+    }
 
+    static void LimparTabela()
+    {
+        using var conexao = new SQLiteConnection(connectionString);
         conexao.Execute("DELETE FROM Pessoa");
     }
 
@@ -93,7 +130,7 @@ class Program
         Console.WriteLine("Cliente cadastrado com sucesso!");
     }
 
-    static void ListarClientes()
+    static void ListarClientes(bool mostrarId = false)
     {
         using var conexao = new SQLiteConnection(connectionString);
         var clientes = conexao.Query<Pessoa>("SELECT * FROM Pessoa");
@@ -108,8 +145,51 @@ class Program
         {
             foreach (var c in clientes)
             {
-                Console.WriteLine(c.Nome);
+                Console.WriteLine(mostrarId ? $"{c.Id} - {c.Nome}" : c.Nome);
             }
         }
+    }
+
+    static void AtualizarCliente()
+    {
+        ListarClientes(true);
+
+        Console.Write("\nDigite o ID do cliente que deseja atualizar: ");
+        if (!int.TryParse(Console.ReadLine(), out int id))
+        {
+            Console.WriteLine("ID inválido.");
+            return;
+        }
+
+        Console.Write("Digite o novo nome: ");
+        string novoNome = Console.ReadLine();
+
+        using var conexao = new SQLiteConnection(connectionString);
+        int linhasAfetadas = conexao.Execute("UPDATE Pessoa SET Nome = @Nome WHERE Id = @Id", new { Nome = novoNome, Id = id });
+
+        if (linhasAfetadas > 0)
+            Console.WriteLine("Cliente atualizado com sucesso!");
+        else
+            Console.WriteLine("Cliente não encontrado.");
+    }
+
+    static void DeletarCliente()
+    {
+        ListarClientes(true);
+
+        Console.Write("\nDigite o ID do cliente que deseja deletar: ");
+        if (!int.TryParse(Console.ReadLine(), out int id))
+        {
+            Console.WriteLine("ID inválido.");
+            return;
+        }
+
+        using var conexao = new SQLiteConnection(connectionString);
+        int linhasAfetadas = conexao.Execute("DELETE FROM Pessoa WHERE Id = @Id", new { Id = id });
+
+        if (linhasAfetadas > 0)
+            Console.WriteLine("Cliente deletado com sucesso!");
+        else
+            Console.WriteLine("Cliente não encontrado.");
     }
 }
